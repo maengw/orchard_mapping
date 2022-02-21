@@ -6,9 +6,6 @@ import numpy as np
 
 
 
-
-
-
 net = cv2.dnn.readNet('/home/woo/PycharmProjects/maeng_yolo_trunk/yolov3_training_1800.weights', '/home/woo/PycharmProjects/maeng_yolo_trunk/yolov3_testing.cfg')
 classes = ['trunk']
 
@@ -17,7 +14,11 @@ output_layers = [layer_names[i[0] - 1] for i in net.getUnconnectedOutLayers()]
 colors = np.random.uniform(0, 255, size=(len(classes), 3))
 
 
-def create_bbox(img):
+def detect_boxes(img):
+    """
+    img: BGR image
+    returns an image with bounding box and the boxes' coordinates
+    """
 
     height, width, _ = img.shape
 
@@ -55,8 +56,8 @@ def create_bbox(img):
 
     indexes = cv2.dnn.NMSBoxes(boxes, confidences, 0.5, 0.4)
 
-    font = cv2.FONT_HERSHEY_PLAIN
-    colors = np.random.uniform(0, 255, size=(len(boxes), 3))
+    #font = cv2.FONT_HERSHEY_PLAIN
+    #colors = np.random.uniform(0, 255, size=(len(boxes), 3))
 
     if len(indexes) != 0:
         #print(indexes)
@@ -67,7 +68,7 @@ def create_bbox(img):
             color = colors[i]
             cv2.rectangle(img, (x, y), (x+w, y+h), color=color, thickness=2)
             # cv2.putText(img, label + " " + confidence, (x, y+20), font, 2, (255, 255, 255), 2)
-            cv2.putText(img, label + " " + confidence, (x, 235), font, 2, color, 2)
+            #cv2.putText(img, label + " " + confidence, (x, 235), font, 2, color, 2)
             final_boxes.append([x,y,w,h])
             final_confidences.append(confidence)
 
@@ -80,16 +81,26 @@ def create_bbox(img):
         if finbox[1] < 0:
             finbox[1] = 0
 
-        if finbox[2] > 846:
-            finbox[2] = 846
-        if finbox[3] > 478:
-            finbox[3] = 478
+
+        if finbox[2] >= width - 2:
+            finbox[2] = width - 2
+        if finbox[3] >= height - 2:
+            finbox[3] = height - 2
+
 
     final_boxes.sort(key=lambda x:x[0])
     return img, final_boxes
 
 
-def convert(img, target_type_min, target_type_max, target_type):
+def convert_scale(img, target_type_min, target_type_max, target_type):
+    """
+    convert data type and rescale the data
+    img: bgr image
+    target_type_min: target minimum value
+    target_type_max: target maximum value
+    target_type: target data type
+    returns a new image with changed data type with new scale
+    """
 
     imin = 0
     imax = img.max()
@@ -98,4 +109,5 @@ def convert(img, target_type_min, target_type_max, target_type):
     b = target_type_max - a * imax
     new_img = (a * img + b).astype(target_type)
     return new_img
+
 
