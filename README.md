@@ -20,7 +20,7 @@ Test Was done on Ubuntu 18.04 OS, python 3.6 and used ROS Melodic but theoretica
 # Instructions
 ## Tree detection 
 YOLO V3 Convolutional Neural Network was trained on tree images collected in various weather conditions(different time of the year and day). It detects trees in an image and gives edge pixel coordinates of the bounding box.   
-* Download yolov3_training_1800.weights file from https://drive.google.com/drive/folders/1IdjyGBXHs_Wx5Szn8fTf6RkCL-AWaZ5r?usp=share_link and place it in /weights/ directory
+* Download yolov3_training_1800.weights file from https://drive.google.com/file/d/1AxkdHrjRh8lwUlIIfGQtGxklDFjq2Vot/view?usp=share_link and place it in /weights/ directory
 * /scripts/tree_detector.py : yolov3 network that detects trees   
 * /config/yolov3_testing.cfg : network configuration file   
 * /weights/yolov3_training_1800.weights : weights file from training network on approximately 1000 tree images for 1800 iterations   
